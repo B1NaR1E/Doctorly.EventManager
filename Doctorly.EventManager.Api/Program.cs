@@ -1,6 +1,20 @@
+using Doctorly.EventManager.Api.Configs;
+using Doctorly.EventManager.Infrastructure.Data;
+using Doctorly.EventManager.Infrastructure.Data.Repositries;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var databaseConfig = builder.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfig>();
+
+builder.Services.AddDbContext<EFContext>(options => 
+{
+    options.UseSqlServer(databaseConfig.ConnectionString);
+});
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -22,6 +22,4 @@ public partial class Event : IAggregateRoot
     {
         Attendees.AddRange(attendees);
     }
-
-    public void 
 }
