@@ -1,12 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Doctorly.EventManager.Domain.Base;
 
-namespace Doctorly.EventManager.Domain.Events
+namespace Doctorly.EventManager.Domain.Events;
+
+public partial class Event : IAggregateRoot
 {
-    public partial class Event
+    public Event(string title, string? description, DateTime startTime, DateTime endTime)
     {
+        Title = title;
+        StartTime = startTime;
+        EndTime = endTime;
+        Description = description;
+        Attendees = new List<Attendee>();
     }
+
+    public void AddAttendee(Attendee attendee)
+    {
+        Attendees.Add(attendee);
+    }
+
+    public void AddAttendee(IEnumerable<Attendee> attendees)
+    {
+        Attendees.AddRange(attendees);
+    }
+
+    public void 
 }

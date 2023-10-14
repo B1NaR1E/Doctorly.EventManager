@@ -1,6 +1,6 @@
 ﻿namespace Doctorly.EventManager.Domain.Base;
 
-public abstract class BaseEntity
+public abstract class BaseEntity : BaseEntity<int>
 {
     private readonly List<BaseDomainEvent> _events;
     public IReadOnlyList<BaseDomainEvent> Events => _events.AsReadOnly();
@@ -16,7 +16,7 @@ public abstract class BaseEntity
     }
 }
 
-public abstract class BaseEntity<TKey> : BaseEntity
+public abstract class BaseEntity<TKey>
 {
     public TKey Id { get; set; }
 }
