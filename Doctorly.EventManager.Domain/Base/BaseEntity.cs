@@ -1,22 +1,20 @@
-﻿namespace Doctorly.EventManager.Domain.Base;
+﻿using System.ComponentModel.DataAnnotations;
 
-public abstract class BaseEntity
+namespace Doctorly.EventManager.Domain.Base;
+
+public abstract class BaseEntity : BaseEntity<int>
 {
-    private readonly List<BaseDomainEvent> _events;
-    public IReadOnlyList<BaseDomainEvent> Events => _events.AsReadOnly();
-
-    protected void AddEvent(BaseDomainEvent @event)
+    public BaseEntity()
     {
-        _events.Add(@event);
-    }
-
-    protected void RemoveEvent(BaseDomainEvent @event) 
-    {
-        _events.Remove(@event);
+        CreateOn = DateTime.Now;
+        UpdateOn = DateTime.Now;
     }
 }
 
-public abstract class BaseEntity<TKey> : BaseEntity
+public abstract class BaseEntity<TKey>
 {
+    [Key]
     public TKey Id { get; set; }
+    public DateTime CreateOn { get; set; }
+    public DateTime UpdateOn { get; set; }
 }

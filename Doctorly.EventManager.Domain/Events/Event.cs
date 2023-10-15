@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Doctorly.EventManager.Domain.Base.Events;
+using Doctorly.EventManager.Domain.Shared;
+using System.ComponentModel.DataAnnotations;
 
-namespace Doctorly.EventManager.Domain.Events
+namespace Doctorly.EventManager.Domain.Events;
+
+public partial class Event : EventBase
 {
-    public partial class Event
-    {
-    }
+    [Required]
+    public EventStatus EventStatus { get; protected set; }
+
+    public List<EventAttendee> EventAttendees { get; protected set; }
 }
