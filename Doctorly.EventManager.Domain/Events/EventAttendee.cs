@@ -8,6 +8,6 @@ public class EventAttendee : BaseEntity
     public int EventId { get; set; }
     public bool IsAttending { get; set; }
 
-    public virtual Attendee Attendee { get; set; }
-    public virtual Event Event { get; set; }
+    public Attendee Attendee { get; set; }
+    public Event Event { get; set; }
 }

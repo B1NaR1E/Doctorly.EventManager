@@ -15,10 +15,31 @@ namespace Doctorly.EventManager.Api.Controllers
             _eventService = eventService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateEventAsync(CreateEventRequest request)
         {
             var reponse = await _eventService.CreateEventAsync(request);
+            return Ok(reponse);
+        }
+
+        [HttpPost("cancel")]
+        public async Task<IActionResult> CancelEventAsync(CancelEventRequest request)
+        {
+            var reponse = await _eventService.CancelEventAsync(request);
+            return Ok(reponse);
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateEventAsync(UpdateEventRequest request)
+        {
+            var reponse = await _eventService.UpdateEventAsync(request);
+            return Ok(reponse);
+        }
+
+        [HttpPost("set-attendance")]
+        public async Task<IActionResult> SetAttendanceAsync(SetAttendanceRequest request)
+        {
+            var reponse = await _eventService.SetAttendanceAsync(request);
             return Ok(reponse);
         }
     }

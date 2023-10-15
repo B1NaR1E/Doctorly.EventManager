@@ -1,26 +1,13 @@
-﻿using Doctorly.EventManager.Domain.Base;
+﻿using Doctorly.EventManager.Domain.Base.Events;
 using Doctorly.EventManager.Domain.Shared;
 using System.ComponentModel.DataAnnotations;
 
 namespace Doctorly.EventManager.Domain.Events;
 
-public partial class Event : BaseEntity
+public partial class Event : EventBase
 {
     [Required]
-    [StringLength(50)]
-    public string Title { get; }
+    public EventStatus EventStatus { get; protected set; }
 
-    [StringLength(250)]
-    public string? Description { get; }
-
-    [Required]
-    public DateTime StartTime { get; }
-
-    [Required]
-    public DateTime EndTime { get; }
-
-    [Required]
-    public EventStatus EventStatus { get; } = EventStatus.Open;
-
-    public virtual List<Attendee> Attendees { get; }
+    public List<EventAttendee> EventAttendees { get; protected set; }
 }
