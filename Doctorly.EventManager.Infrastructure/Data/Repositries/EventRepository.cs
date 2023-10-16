@@ -15,8 +15,7 @@ public class EventRepository : RepositoryBase<Event>
     {
         return await _context.Events
             .Where(e => e.Id == eventId)
-            .Include(e => e.EventAttendees)
-            .ThenInclude(ea => ea.Attendee)
+            .Include(ea => ea.Attendees)
             .FirstOrDefaultAsync();
     }
 }

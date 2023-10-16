@@ -47,8 +47,8 @@ namespace Doctorly.EventManager.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetEventsAsync(DateTime startTime, DateTime endTime)
         {
-            var reponse = await _eventService.SetAttendanceAsync(request);
-            return Ok(reponse);
+            //var reponse = await _eventService.SetAttendanceAsync(request);
+            return Ok();
         }
     }
 }

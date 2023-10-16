@@ -1,6 +1,7 @@
 using Doctorly.EventManager.Api.Configs;
 using Doctorly.EventManager.Api.Mappers;
 using Doctorly.EventManager.Api.Services;
+using Doctorly.EventManager.Infrastructure;
 using Doctorly.EventManager.Infrastructure.Data;
 using Doctorly.EventManager.Infrastructure.Data.Repositries;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,10 @@ builder.Services.AddDbContext<EFContext>(options =>
     {
         sqlOptions.EnableRetryOnFailure();
     });
-    //options.
 });
 
-builder.Services.AddTransient<EventRepository>();
-builder.Services.AddTransient<AttendeeRepository>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IEventService, EventService>();
-builder.Services.AddTransient<IAttendeeService, AttendeeService>();
 //builder.Services.AddHostedService<EventNotificationService>();
 
 builder.Services.AddAutoMapper(typeof(EventMapper).Assembly, typeof(AttendeeMapper).Assembly);
