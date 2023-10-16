@@ -2,18 +2,20 @@
 using Doctorly.EventManager.Api.DTOs.Event;
 using Doctorly.EventManager.Api.Validators.Event;
 using Doctorly.EventManager.Domain.Events;
+using Doctorly.EventManager.Infrastructure;
 using Doctorly.EventManager.Infrastructure.Data.Repositries;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Doctorly.EventManager.Api.Services;
 
 public class EventService : IEventService
 {
-    private readonly EventRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public EventService(EventRepository repository, IMapper mapper)
+    public EventService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _repository = repository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
@@ -35,13 +37,15 @@ public class EventService : IEventService
             var @event = new Event();
             @event.SetEventInfo(request.Title, request.Description, request.StartTime, request.EndTime);
 
-            foreach (var attendeeId in request.AttendeeIds)
+            foreach (var attendee in request.Attendees)
             {
-                @event.AddAttendee(attendeeId);
+                @event.AddAttendee(attendee.FirstName, attendee.LastName, attendee.EmailAddress);
             }
 
-            var result = await _repository.AddAsync(@event);
-            await _repository.SaveChangesAsync();
+            var repo = _unitOfWork.Repository<EventRepository>();
+
+            var result = await repo!.AddAsync(@event);
+            await _unitOfWork.SaveChangesAsync();
 
             response.Successfull = true;
             
@@ -72,7 +76,9 @@ public class EventService : IEventService
                 return response;
             }
 
-            var @event = await _repository.GetEventWithAttendeesAsync(request.Id);
+            var repo = _unitOfWork.Repository<EventRepository>();
+
+            var @event = await repo!.GetEventWithAttendeesAsync(request.Id);
 
             if (@event is null)
             {
@@ -83,9 +89,15 @@ public class EventService : IEventService
             @event!.SetEventInfo(request.Title, request.Description, request.StartTime, request.EndTime);
 
             //TODO: Need to add logic to update attendees as well.
+            foreach (var attendee in request.Attendees)
+            {
+                var attToUpdate = @event.Attendees.FirstOrDefault(a => a.EmailAddress == attendee.EmailAddress);
+                @event.Attendees.Remove(attToUpdate!);
+                @event.AddAttendee(attendee.FirstName, attendee.LastName, attendee.EmailAddress);
+            }
 
-            var result = await _repository.UpdateAsync(@event);
-            await _repository.SaveChangesAsync();
+            var result = await repo.UpdateAsync(@event);
+            await _unitOfWork.SaveChangesAsync();
 
             response.Successfull = true;
             response.Message = "Event successfully update.";
@@ -105,7 +117,9 @@ public class EventService : IEventService
 
         try
         {
-            var @event = await _repository.GetAsync(e => e.Id == request.EventId);
+            var repo = _unitOfWork.Repository<EventRepository>();
+
+            var @event = await repo!.GetEventWithAttendeesAsync(request.EventId);
 
             if (@event is null)
             {
@@ -115,9 +129,9 @@ public class EventService : IEventService
 
             @event!.Cancel();
 
-            await _repository.UpdateAsync(@event);
+            await repo!.UpdateAsync(@event);
 
-            await _repository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             response.Successfull = true;
             response.Message = "Event successfully cancelled.";
@@ -137,7 +151,9 @@ public class EventService : IEventService
 
         try
         {
-            var @event = await _repository.GetEventWithAttendeesAsync(request.EventId);
+            var repo = _unitOfWork.Repository<EventRepository>();
+
+            var @event = await repo!.GetEventWithAttendeesAsync(request.EventId);
 
             if(@event is null)
             {
@@ -145,19 +161,45 @@ public class EventService : IEventService
                 response.Message = $"Error setting attendance for event.Could not find event for event id: {request.EventId}.";
             }
 
-            @event!.SetAttending(request.AttendeeId, request.Attending);
+            @event!.SetAttending(request.EmailAddress, request.Attending);
 
-            await _repository.UpdateAsync(@event);
+            await repo.UpdateAsync(@event);
 
-            await _repository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             response.Successfull = true;
-            response.Message = $"Attendance for attendeeId: {request.AttendeeId} has been set successfully.";
+            response.Message = $"Attendance for attendee: {request.EmailAddress} has been set successfully.";
         }
         catch (Exception)
         {
             response.Successfull = false;
-            response.Message = $"An unexpected error has occurred while trying to set the attandance for attendee: {request.AttendeeId} for event: {request.EventId}.";
+            response.Message = $"An unexpected error has occurred while trying to set the attandance for attendee: {request.EmailAddress} for event: {request.EventId}.";
+        }
+
+        return response;
+    }
+
+    public async Task<GetEventsResponse> GetEventsAsyns(DateTime? startTime, DateTime? endTime, DateTime? date)
+    {
+        var response = new GetEventsResponse();
+
+        try
+        {
+            var repo = _unitOfWork.Repository<EventRepository>();
+
+            if(date is not null)
+            {
+                response.Successfull = true;
+                var events = await repo!.GetAllAsync(e => e.StartTime == date);
+                response.Response = _mapper.Map<List<EventDto>>(events);
+            }
+
+            
+        }
+        catch (Exception)
+        {
+
+            throw;
         }
 
         return response;

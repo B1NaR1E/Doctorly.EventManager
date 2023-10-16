@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Doctorly.EventManager.Api.DTOs.Attendee;
+using System.ComponentModel.DataAnnotations;
 
 namespace Doctorly.EventManager.Api.DTOs.Event
 {
@@ -15,6 +16,6 @@ namespace Doctorly.EventManager.Api.DTOs.Event
         [Required]
         public DateTime EndTime { get; set; }
 
-        public List<int> AttendeeIds { get; set; }
+        public List<AttendeeDto> Attendees { get; set; }
     }
 }

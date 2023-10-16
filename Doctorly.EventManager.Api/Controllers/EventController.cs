@@ -1,5 +1,6 @@
 ﻿using Doctorly.EventManager.Api.DTOs.Event;
 using Doctorly.EventManager.Api.Services;
+using Doctorly.EventManager.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Doctorly.EventManager.Api.Controllers
@@ -38,6 +39,13 @@ namespace Doctorly.EventManager.Api.Controllers
 
         [HttpPost("set-attendance")]
         public async Task<IActionResult> SetAttendanceAsync(SetAttendanceRequest request)
+        {
+            var reponse = await _eventService.SetAttendanceAsync(request);
+            return Ok(reponse);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEventsAsync(DateTime startTime, DateTime endTime)
         {
             var reponse = await _eventService.SetAttendanceAsync(request);
             return Ok(reponse);

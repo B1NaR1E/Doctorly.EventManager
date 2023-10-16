@@ -7,7 +7,7 @@ public partial class Event : IAggregateRoot
 {
     public Event()
     {
-        EventAttendees = new List<EventAttendee>();
+        Attendees = new List<Attendee>();
         EventStatus = EventStatus.Open;
     }
 
@@ -19,14 +19,14 @@ public partial class Event : IAggregateRoot
         Description = description;
     }
 
-    public void AddAttendee(int attendeeId)
+    public void AddAttendee(string firstName, string lastName, string emailAddress, bool isAttending = false)
     {
-        EventAttendees.Add(new EventAttendee() { AttendeeId = attendeeId });
+        Attendees.Add(new Attendee(firstName, lastName, emailAddress, Id));
     }
 
-    public void RemoveAttendee(EventAttendee attendee)
+    public void RemoveAttendee(Attendee attendee)
     {
-        EventAttendees.Remove(attendee);
+        Attendees.Remove(attendee);
     }
 
     public void Cancel()
@@ -34,9 +34,9 @@ public partial class Event : IAggregateRoot
         EventStatus = EventStatus.Cancelled;
     }
 
-    public void SetAttending(int attendeeId, bool isAttending)
+    public void SetAttending(string emailAddress , bool isAttending)
     {
-        var attendee = EventAttendees.FirstOrDefault(a => a.AttendeeId == attendeeId);
+        var attendee = Attendees.FirstOrDefault(a => a.EventId == Id && a.EmailAddress == emailAddress);
         attendee!.IsAttending = isAttending;
     }
 }

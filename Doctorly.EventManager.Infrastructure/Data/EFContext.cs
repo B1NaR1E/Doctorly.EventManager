@@ -12,22 +12,13 @@ public class EFContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<EventAttendee>()
-            .HasOne(e => e.Event)
-            .WithMany(e => e.EventAttendees)
-            .HasForeignKey(e => e.EventId)
-            .HasPrincipalKey(e => e.Id);
 
-        modelBuilder.Entity<EventAttendee>()
-            .HasOne(e => e.Attendee)
-            .WithMany(e => e.AttendeeEvents)
-            .HasForeignKey(e => e.AttendeeId)
-            .HasPrincipalKey(e => e.Id);
+        modelBuilder.Entity<Attendee>().HasKey(a => new { a.EventId, a.EmailAddress });
+        modelBuilder.Entity<Event>().HasMany(e => e.Attendees).WithOne(a => a.Event);
 
         base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<Event> Events { get; set; }
     public DbSet<Attendee> Attendees { get; set; }
-    public DbSet<EventAttendee> EventAttendees { get; set; }
 }

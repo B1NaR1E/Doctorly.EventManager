@@ -3,19 +3,34 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Doctorly.EventManager.Domain.Events;
 
-public partial class Attendee : BaseEntity
+public partial class Attendee : IValueObject
 {
-    [Required]
-    [StringLength(20)]
-    public string FirstName { get; protected set; }
+    public Attendee(string firstName, string lastName, string emailAddress, int eventId, bool isAttending = false)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        EmailAddress = emailAddress;
+        EventId = eventId;
+        IsAttending = isAttending;
+        Event = new Event();
+    }
 
     [Required]
     [StringLength(20)]
-    public string LastName { get; protected set; }
+    public string FirstName { get; }
+
+    [Required]
+    [StringLength(20)]
+    public string LastName { get; }
 
     [Required]
     [StringLength(50)]
-    public string EmailAddress { get; protected set; }
+    public string EmailAddress { get; }
 
-    public List<EventAttendee> AttendeeEvents { get; set; }
+    public bool IsAttending { get; set; }
+
+    [Required]
+    public int EventId { get; }
+
+    public Event Event { get; }
 }
