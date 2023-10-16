@@ -8,11 +8,10 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     where TEntity : BaseEntity
 {
     private readonly DbSet<TEntity> _dbSet;
-    private readonly EFContext _context;
+
     public RepositoryBase(EFContext context)
     {
         _dbSet = context.Set<TEntity>();
-        _context = context;
     }
 
     public async Task<TEntity> AddAsync(TEntity entity)
@@ -43,11 +42,5 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
 
         _dbSet.Update(entity);
         return Task.FromResult<TEntity>(entity);
-    }
-
-    //TODO: Rethink this. Added it here as IUnitOfWork was giving issues. If I have time. Sort this out.
-    public async Task<int> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync();
     }
 }

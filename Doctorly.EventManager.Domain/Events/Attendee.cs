@@ -3,8 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Doctorly.EventManager.Domain.Events;
 
-public partial class Attendee : ValueObject
+public class Attendee : ValueObject
 {
+    public Attendee()
+    {
+        
+    }
     public Attendee(string firstName, string lastName, string emailAddress, int eventId, bool isAttending = false)
     {
         FirstName = firstName;

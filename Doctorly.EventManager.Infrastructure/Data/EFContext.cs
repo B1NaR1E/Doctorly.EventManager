@@ -14,6 +14,9 @@ public class EFContext : DbContext
     {
 
         modelBuilder.Entity<Attendee>().HasKey(a => new { a.EventId, a.EmailAddress });
+        modelBuilder.Entity<Attendee>().Property(a => a.FirstName);
+        modelBuilder.Entity<Attendee>().Property(a => a.LastName);
+
         modelBuilder.Entity<Event>().HasMany(e => e.Attendees).WithOne(a => a.Event);
 
         base.OnModelCreating(modelBuilder);

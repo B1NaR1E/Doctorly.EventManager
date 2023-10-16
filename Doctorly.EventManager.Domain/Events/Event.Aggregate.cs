@@ -21,7 +21,7 @@ public partial class Event : IAggregateRoot
 
     public void AddAttendee(string firstName, string lastName, string emailAddress, bool isAttending = false)
     {
-        Attendees.Add(new Attendee(firstName, lastName, emailAddress, Id));
+        Attendees.Add(new Attendee(firstName, lastName, emailAddress, Id, isAttending));
     }
 
     public void RemoveAttendee(Attendee attendee)

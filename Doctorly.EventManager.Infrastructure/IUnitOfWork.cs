@@ -1,7 +1,7 @@
 ﻿namespace Doctorly.EventManager.Infrastructure;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IDisposable
 {
-    TRepository? Repository<TRepository>();
+    TRepository Repository<TRepository>();
     Task<int> SaveChangesAsync();
 }

@@ -8,6 +8,6 @@ public class EventMapper : Profile
 {
     public EventMapper()
     {
-        CreateMap<Event, EventDto>().ForMember(e => e.Attendees, act => act.Ignore());
+        CreateMap<Event, EventDto>();
     }
 }

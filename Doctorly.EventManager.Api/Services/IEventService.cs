@@ -8,5 +8,5 @@ public interface IEventService
     Task<CancelEventResponse> CancelEventAsync(CancelEventRequest request);
     Task<SetAttendanceResponse> SetAttendanceAsync(SetAttendanceRequest request);
     Task<UpdateEventResponse> UpdateEventAsync(UpdateEventRequest request);
-    Task<GetEventsResponse> GetEventsAsyns(DateTime? startTime, DateTime? endTime, DateTime? date);
+    Task<GetEventsResponse> GetEventsAsyns(DateTime? startTime, DateTime? endTime);
 }

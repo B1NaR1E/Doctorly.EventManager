@@ -4,7 +4,6 @@ using Doctorly.EventManager.Api.Validators.Event;
 using Doctorly.EventManager.Domain.Events;
 using Doctorly.EventManager.Infrastructure;
 using Doctorly.EventManager.Infrastructure.Data.Repositries;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Doctorly.EventManager.Api.Services;
 
@@ -44,7 +43,7 @@ public class EventService : IEventService
 
             var repo = _unitOfWork.Repository<EventRepository>();
 
-            var result = await repo!.AddAsync(@event);
+            var result = await repo.AddAsync(@event);
             await _unitOfWork.SaveChangesAsync();
 
             response.Successfull = true;
@@ -78,7 +77,7 @@ public class EventService : IEventService
 
             var repo = _unitOfWork.Repository<EventRepository>();
 
-            var @event = await repo!.GetEventWithAttendeesAsync(request.Id);
+            var @event = await repo.GetEventWithAttendeesAsync(request.Id);
 
             if (@event is null)
             {
@@ -88,7 +87,6 @@ public class EventService : IEventService
 
             @event!.SetEventInfo(request.Title, request.Description, request.StartTime, request.EndTime);
 
-            //TODO: Need to add logic to update attendees as well.
             foreach (var attendee in request.Attendees)
             {
                 var attToUpdate = @event.Attendees.FirstOrDefault(a => a.EmailAddress == attendee.EmailAddress);
@@ -129,7 +127,7 @@ public class EventService : IEventService
 
             @event!.Cancel();
 
-            await repo!.UpdateAsync(@event);
+            await repo.UpdateAsync(@event);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -179,7 +177,7 @@ public class EventService : IEventService
         return response;
     }
 
-    public async Task<GetEventsResponse> GetEventsAsyns(DateTime? startTime, DateTime? endTime, DateTime? date)
+    public async Task<GetEventsResponse> GetEventsAsyns(DateTime? startTime, DateTime? endTime)
     {
         var response = new GetEventsResponse();
 
@@ -187,19 +185,18 @@ public class EventService : IEventService
         {
             var repo = _unitOfWork.Repository<EventRepository>();
 
-            if(date is not null)
-            {
-                response.Successfull = true;
-                var events = await repo!.GetAllAsync(e => e.StartTime == date);
-                response.Response = _mapper.Map<List<EventDto>>(events);
-            }
+            var events = await repo!.GetEventsWithAttendeesAsync(e => e.StartTime >= startTime!.Value && e.EndTime <= endTime!.Value);
 
-            
+            response.Successfull = true;
+            response.Response = _mapper.Map<List<EventDto>>(events);
+
+
+
         }
         catch (Exception)
         {
-
-            throw;
+            response.Successfull = false;
+            response.Message = $"An unexpected error has occurred while trying to retreive the events.";
         }
 
         return response;
